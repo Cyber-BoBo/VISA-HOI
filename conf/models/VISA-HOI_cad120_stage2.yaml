@@ -1,0 +1,66 @@
+metadata:
+  model_name: TIGAhoi
+  input_type: multiple
+parameters:
+  add_segment_length: 0  # length of the segment to the segment-level rnn. 0 is off and 1 is on.
+  add_time_position: 0  # absolute time position to the segment-level rnn. 0 is off and 1 is on.
+  time_position_strategy: s  # input time position to segment [s] or discrete update [u].
+  positional_encoding_style: e  # e [embedding] or p [periodic].
+  attention_style: v3  # v1 [concat], v2 [dot-product], v3 [scaled_dot-product], v4 [general]
+  bias: true
+  cat_level_states: 0  # concatenate first and second level hidden states for predictors MLPs. 0 is off and 1 is on.
+  discrete_networks_num_layers: 1  # depth of the state change detector MLP.
+  discrete_optimization_strategy: gs  # straight-through [st] or gumbel-sigmoid [gs]
+  filter_discrete_updates: true  # maxima filter for soft output of state change detector.
+  human_node:  9  # 9 for cad120 and mphoi, 6 for bimanual
+  human_num:  1   # 1 for cad120, 2 for mphoi and bimanual
+  object_num: 5   # 5 for cad120, 4 for mphoi, 9 for bimanual
+  hidden_size: 512 # 512 for cad120 & mphoi; 64 for bimanual
+  message_humans_to_human: false  # only meaningful for bimanual and mphoi dataset; false for cad120
+  message_human_to_objects: true
+  message_objects_to_human: true
+  message_objects_to_object: true
+  message_geometry_to_objects: true 
+  message_geometry_to_human: false
+  # message_semantic_to_objects: false
+  # message_semantic_to_human: false
+  message_segment: true
+  caption_message: ${models.misc.input_caption_action_match}
+  iim_layer_num: 1    # meaningful if message type is v3
+  iim_num_heads: 8    # meaningful if message type is v3
+  cam_layer_num: 2    # meaningful if input_caption_action_match is true
+  message_type: v3  # v1 [relational] or v2 [non-relational] or v3 [iim]
+  message_granularity: v1  # v1 [generic] or v2 [specific]
+  message_aggregation: att  # mean_pooling [mp] or attention [att]
+  object_segment_update_strategy: ind  # same_as_human [sah], independent [ind], or conditional_on_human [coh]
+  share_level_mlps: 0  # whether to share [1] or not [0] the prediction MLPs of the levels.
+  update_segment_threshold: 0.1  # [0.0, 1.0)
+  delta: true
+  ablation_GE: true
+  ablation_MA: false
+optimization:
+  batch_size: 16  # mphoi:8; cad120:16; bimanual:32
+  clip_gradient_at: 0.0
+  epochs: 40 # # cad120 & mphoi:40; bimanual: 60
+  learning_rate: 1e-3  # mphoi:1e-4 if positive, first level does frame-level prediction
+  val_fraction: 0.1
+misc:
+  input_caption_action_match: false  
+  impose_segmentation_pattern: 0  # 0 [no pattern], 1 [all ones]
+  input_human_segmentation: false
+  input_object_segmentation: false
+  input_text_feature: true
+  make_attention_distance_based: true  # only meaningful if message_aggregation is attention
+  multi_task_loss_learner: false
+  pretrained: true  # unfortunately I need two entries for the checkpoint name
+  pretrained_path: ${oc.env:PWD}/outputs/cad120/TIGAhoi/TIGAhoi_True_cFalse_mtv3_nl1_hs512_e40_bs16_lr0.001_0.5_Subject5 # specified parameters must match parameters of the pre-trained model
+  segmentation_loss:
+    add: true
+    pretrain: false
+    sigma: 4.0  # Gaussian smoothing
+    weight: 1.0
+logging:
+  root_log_dir: ${oc.env:PWD}/outputs/${data.data.name}/${models.metadata.model_name}
+  checkpoint_name: "${models.metadata.model_name}_${models.parameters.delta}_c${models.misc.input_caption_action_match}_mt${models.parameters.message_type}_nl${models.parameters.iim_layer_num}_hs${models.parameters.hidden_size}_e${models.optimization.epochs}_bs${models.optimization.batch_size}_\
+                    lr${models.optimization.learning_rate}_${models.parameters.update_segment_threshold}_${data.data.cross_validation_test_subject}"
+  log_dir: ${models.logging.root_log_dir}/${models.logging.checkpoint_name}

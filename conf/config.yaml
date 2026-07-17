@@ -1,0 +1,11 @@
+defaults:
+  - models: VISA-HOI_bimanual_interactions_stage1
+  - data: mphoi
+  # mphoi, cad120, bimanual
+hydra:
+  run:
+    dir: ./outputs/${data.data.name}/${models.metadata.model_name}/${models.logging.checkpoint_name}
+    # 
+resources:
+  use_gpu: true
+  num_threads: 12

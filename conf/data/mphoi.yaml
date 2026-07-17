@@ -1,0 +1,24 @@
+data:
+  name: mphoi
+  path: ${oc.env:PWD}/data/MPHOI/mphoi_ground_truth_labels.json      # ground truth labels
+  
+
+  # Faster_rcnn
+  path_zarr: ${oc.env:PWD}/data/MPHOI/mphoi_derived_features/faster_rcnn.zarr    # faster RCNN
+  path_obb_zarr: ${oc.env:PWD}/data/MPHOI/mphoi_derived_features/object_bounding_boxes.zarr  # 物体的bounding boxes
+  path_hbb_zarr: ${oc.env:PWD}/data/MPHOI/mphoi_derived_features/human_bounding_boxes.zarr   # 人的bounding boxes
+  path_hps_zarr: ${oc.env:PWD}/data/MPHOI/mphoi_derived_features/human_pose.zarr             # pose
+
+  # rt_detr
+  # path_zarr: ${oc.env:PWD}/data/MPHOI/mphoi_derived_features/rt_detr.zarr    # faster RCNN
+  # path_obb_zarr: ${oc.env:PWD}/data/MPHOI/mphoi_derived_features/object_bounding_boxes_rtdetr.zarr  # 物体的bounding boxes
+  # path_hbb_zarr: ${oc.env:PWD}/data/MPHOI/mphoi_derived_features/human_bounding_boxes_rtdetr.zarr   # 人的bounding boxes
+  # path_hps_zarr: ${oc.env:PWD}/data/MPHOI/mphoi_derived_features/human_pose_alphapose.zarr             # pose
+  
+  
+  path_action_zarr: ${oc.env:PWD}/data/MPHOI/mphoi_derived_features/action_features.zarr
+  path_caption_zarr: ${oc.env:PWD}/data/MPHOI/mphoi_derived_features/caption_features_doubao_aligned.zarr            
+  path_similarity_zarr: ${oc.env:PWD}/data/MPHOI/mphoi_derived_features/similarity.json
+  cross_validation_test_subject: Subject25 # Subject45, Subject25, Subject14
+  scaling_strategy: null  # null or standard
+  downsampling: 3  # 1 = full FPS, 2 = half FPS, ...
